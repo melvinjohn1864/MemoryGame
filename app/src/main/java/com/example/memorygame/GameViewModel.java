@@ -108,15 +108,51 @@ public class GameViewModel extends AndroidViewModel {
             } else {
                 Image_ previousImage = imageUrls.get(integerList.get(position));
                 if (!image.getProductId().equals(previousImage.getProductId())) {
-                    image.setClickStatus(false);
-                    image.setCheckStatus(false);
+                    revertTheImages(currentPosition,position,levelOfGame);
                     noMatchMade.setValue(null);
-                    mRecyclerViewUpdateTrigger.itemChanged(currentPosition, image);
                 } else {
                     integerList.add(currentPosition);
                     calculateScore(levelOfGame);
                 }
             }
+        }
+    }
+
+    //Function to revert the images into previous states if they dont match
+    private void revertTheImages(int currentPosition, int position, int levelOfGame) {
+        Image_ image = imageUrls.get(currentPosition);
+        image.setClickStatus(false);
+        image.setCheckStatus(false);
+        mRecyclerViewUpdateTrigger.itemChanged(currentPosition, image);
+
+        //Reverting the images based on level and updating the integer list.
+        if (integerList.size() % levelOfGame == 1){
+            Image_ previousImage = imageUrls.get(integerList.get(position));
+            previousImage.setClickStatus(false);
+            mRecyclerViewUpdateTrigger.itemChanged(integerList.get(position),previousImage);
+            integerList.remove(position);
+        } else if (integerList.size() % levelOfGame == 2) {
+            Image_ firstPreviousImage = imageUrls.get(integerList.get(position));
+            Image_ secondPreviousImage = imageUrls.get(integerList.get(position + 1));
+            firstPreviousImage.setClickStatus(false);
+            secondPreviousImage.setClickStatus(false);
+            mRecyclerViewUpdateTrigger.itemChanged(integerList.get(position),firstPreviousImage);
+            mRecyclerViewUpdateTrigger.itemChanged(integerList.get(position + 1),secondPreviousImage);
+            integerList.remove(position);
+            integerList.remove(position);
+        } else if (integerList.size() % levelOfGame == 3) {
+            Image_ firstPreviousImage = imageUrls.get(integerList.get(position));
+            Image_ secondPreviousImage = imageUrls.get(integerList.get(position + 1));
+            Image_ thirdPreviousImage = imageUrls.get(integerList.get(position + 2));
+            firstPreviousImage.setClickStatus(false);
+            secondPreviousImage.setClickStatus(false);
+            thirdPreviousImage.setClickStatus(false);
+            mRecyclerViewUpdateTrigger.itemChanged(integerList.get(position),firstPreviousImage);
+            mRecyclerViewUpdateTrigger.itemChanged(integerList.get(position + 1),secondPreviousImage);
+            mRecyclerViewUpdateTrigger.itemChanged(integerList.get(position + 2),thirdPreviousImage);
+            integerList.remove(position);
+            integerList.remove(position);
+            integerList.remove(position);
         }
     }
 
@@ -128,7 +164,7 @@ public class GameViewModel extends AndroidViewModel {
         }else if (levelOfGame == 3 && integerList.size() % levelOfGame == 0){
             int score = integerList.size()/3;
             stringResourceShower.setValue(score + "");
-        }else if (levelOfGame == 4 && integerList.size() % levelOfGame == 4){
+        }else if (levelOfGame == 4 && integerList.size() % levelOfGame == 0){
             int score = integerList.size()/4;
             stringResourceShower.setValue(score + "");
         }

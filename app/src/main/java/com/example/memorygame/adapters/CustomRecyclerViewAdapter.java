@@ -19,8 +19,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class CustomRecyclerViewAdapter extends RecyclerView.Adapter<CustomRecyclerViewAdapter.CustomViewHolder> {
 
-    private int currentPosition = -1;
-
     public interface OnRecyclerViewImageSelectedListener<T> {
         void imageClicked(int position, T t);
     }
@@ -49,6 +47,7 @@ public class CustomRecyclerViewAdapter extends RecyclerView.Adapter<CustomRecycl
     public void onBindViewHolder(@NonNull final CustomRecyclerViewAdapter.CustomViewHolder holder, int position) {
         Image_ image = imageUrls.get(position);
 
+        //Binding the view depending on different conditions.
         if (image.isClickStatus()) {
             holder.img_default.setVisibility(View.GONE);
             holder.img_game.setVisibility(View.VISIBLE);
@@ -57,6 +56,7 @@ public class CustomRecyclerViewAdapter extends RecyclerView.Adapter<CustomRecycl
                         .load(image.getSrc())
                         .into(holder.img_game);
             }
+
         } else if(!image.isCheckStatus()) {
             holder.img_default.setVisibility(View.GONE);
             holder.img_game.setVisibility(View.VISIBLE);
@@ -73,9 +73,21 @@ public class CustomRecyclerViewAdapter extends RecyclerView.Adapter<CustomRecycl
                 public void run() {
                     holder.img_default.setVisibility(View.VISIBLE);
                     holder.img_game.setVisibility(View.GONE);
-                    //Toast.makeText(context,"Failed",Toast.LENGTH_SHORT).show();
                 }
-            }, 2000);
+            }, 1000);
+
+
+
+        } else if (!image.isClickStatus()) {
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    holder.img_default.setVisibility(View.VISIBLE);
+                    holder.img_game.setVisibility(View.GONE);
+                }
+            }, 1000);
+
 
         } else {
             holder.img_default.setVisibility(View.VISIBLE);
